@@ -16,13 +16,12 @@ export default class AppleModel {
         return this._y;
     }
 
-    get color(){
+    get color() {
         return this._color;
     }
 
     isColliding(x, y) {
-        return x === this.x &&
-            y === this.y;
+        return x === this._x &&
+               y === this._y;
     }
-
 }

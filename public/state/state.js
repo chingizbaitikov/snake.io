@@ -1,4 +1,4 @@
-import DrawingData from "../drawingData";
+import DrawingHelpers from '../utilities/drawingHelpers.js';
 
 export default class State {
     constructor(keyMapping) {
@@ -6,7 +6,7 @@ export default class State {
     }
 
     onDraw(ctx, screenWidth, screenHeight) {
-        DrawingData.clearScreen(ctx, screenWidth, screenHeight)
+        DrawingHelpers.clearScreen(ctx, screenWidth, screenHeight);
     }
 
     onKeyDown(key) {

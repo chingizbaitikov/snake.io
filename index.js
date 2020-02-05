@@ -1,30 +1,55 @@
-import MenuState from "./state/menuState";
-function setup(ctx, w, h) {
-    window.state = new MenuState();
-    window.requestAnimationFrame(timestamp => draw(ctx, w, h, timestamp));
-}
+import express from 'express';
+import http from 'http';
+import socketIO from 'socket.io';
 
-function draw(ctx, w, h, timestamp) {
-    if (w !== window.innerWidth || h !== window.innerHeight) {
-        w = canvas.width  = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-    }
+const expressServer = express();
+const httpServer = http.createServer(expressServer);
+const ioServer = socketIO(httpServer); 
 
-    state.onDraw(ctx, w, h);
+const port = 80;
+const tick = 33.3;
 
-    window.requestAnimationFrame(timestamp => draw(ctx, w, h, timestamp))
+expressServer.use(express.static('public'));
 
-}
+ioServer.on('connection', socket => {
+    console.log(`A new player has connected with id ${socket.id}`);
 
-function keyDown(key) {
-    state.onKeyDown(key);
-}
+    socket.on('spawn', () => {
+        console.log(`A new player with id ${socket.id} has issued a spawn command.`);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const canvas = document.getElementById('canvas');
-    const w = canvas.width  = window.innerWidth;
-    const h = canvas.height = window.innerHeight;
-    setup(canvas.getContext('2d'), w, h);
-    document.addEventListener('keydown', e => keyDown(e.key))
+        // TODO: 1. Find a base. Disconnect if there are no bases left.
+        // TODO: 2. Create a new snake
+
+        socket.on('command', key => {
+            switch (key) {
+                case 'w':
+                    // TODO: turn snake up
+                    break;
+                case 'a':
+                    // TODO: turn snake left
+                    break;
+                case 's':
+                    // TODO: turn snake down
+                    break;
+                case 'd':
+                    // TODO: turn snake right
+                    break;
+            }
+            
+            console.log(`Player with id ${socket.id} has issued a ${key} command.`);
+        });
+
+        socket.on('disconnect', reason => {
+            console.log(`The player with id ${socket.id} has disconnected.\nReason: ${reason}.`);
+
+            // TODO: make the snake dead
+        })
+    });
 });
 
+setInterval(() => {
+    // TODO: move snakes
+    ioServer.emit('update', 'todo: replace with real snake data');
+}, tick);
+
+httpServer.listen(port, () => console.log(`Snake server is listening on port ${port}.`));
